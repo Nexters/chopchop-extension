@@ -1,0 +1,20 @@
+{
+  "name": "Nexters.Me",
+  "version": "0.0.3",
+  "description": "shorten your url",
+  "permissions": ["activeTab", "clipboardWrite", "https://www.nexters.me"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "Shorten Your Url"
+  },
+  "icons": {
+    "16": "./images/logo.png",
+    "32": "./images/logo.png",
+    "64": "./images/logo.png",
+    "128": "./images/logo.png"
+  },
+  "manifest_version": 2
+}
