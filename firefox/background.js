@@ -1,14 +1,15 @@
 chrome.browserAction.onClicked.addListener(async function(tab) {
   const url = "https://www.nexters.me/api/v1/shorten";
   const req = { originUrl: tab.url };
-  let success = false;
-  let bodyData = {};
-  chrome.notifications.create({
+  const id = Date.now() + "";
+  chrome.notifications.create(id, {
     type: "basic",
     title: "Url을 줄이는중...",
     message: tab.url,
     iconUrl: "./images/logo.png"
   });
+  let success = false;
+  let bodyData = {};
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -32,25 +33,20 @@ chrome.browserAction.onClicked.addListener(async function(tab) {
       })()
       `
     });
-    success = true;
+    chrome.notifications.clear(id);
+    chrome.notifications.create({
+      type: "basic",
+      title: `${bodyData.shortUrl} - Url이 복사되었습니다.`,
+      message: tab.url,
+      iconUrl: "./images/logo.png"
+    });
   } catch (err) {
-    success = false;
-  }
-  setTimeout(() => {
-    if (success) {
-      chrome.notifications.create({
-        type: "basic",
-        title: "Url이 복사되었습니다.",
-        message: bodyData.shortUrl,
-        iconUrl: "./images/logo.png"
-      });
-      return;
-    }
+    chrome.notifications.clear(id);
     chrome.notifications.create({
       type: "basic",
       title: "실패했습니다. 다시 시도해 주세요",
       message: "",
       iconUrl: "./images/logo.png"
     });
-  }, 800);
+  }
 });
