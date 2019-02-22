@@ -1,6 +1,15 @@
 chrome.browserAction.onClicked.addListener(async function(tab) {
   const url = "https://www.nexters.me/api/v1/shorten";
   const req = { originUrl: tab.url };
+  const id = Date.now() + "";
+  chrome.notifications.create(id, {
+    type: "basic",
+    title: "Url을 줄이는중...",
+    message: tab.url,
+    iconUrl: "./images/logo.png"
+  });
+  let success = false;
+  let bodyData = {};
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -11,7 +20,7 @@ chrome.browserAction.onClicked.addListener(async function(tab) {
       mode: "cors",
       body: JSON.stringify(req)
     });
-    const bodyData = await res.json();
+    bodyData = await res.json();
     chrome.tabs.executeScript({
       code: `
       (function() {
@@ -21,15 +30,28 @@ chrome.browserAction.onClicked.addListener(async function(tab) {
         el.select();
         document.execCommand("copy");
         document.body.removeChild(el);
-        alert("복사완료!");
       })()
       `
     });
+    success = true;
   } catch (err) {
-    chrome.tabs.executeScript({
-      code: `
-      alert("실패했습니다!");
-      `
-    });
+    success = false;
   }
+  setTimeout(() => {
+    if (success) {
+      chrome.notifications.update(id, {
+        type: "basic",
+        title: "Url이 복사되었습니다.",
+        message: bodyData.shortUrl,
+        iconUrl: "./images/logo.png"
+      });
+      return;
+    }
+    chrome.notifications.update(id, {
+      type: "basic",
+      title: "실패했습니다. 다시 시도해 주세요",
+      message: "",
+      iconUrl: "./images/logo.png"
+    });
+  }, 800);
 });

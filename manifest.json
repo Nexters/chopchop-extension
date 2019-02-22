@@ -1,8 +1,8 @@
 {
   "name": "Nexters.Me",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "shorten your url",
-  "permissions": ["activeTab", "clipboardWrite", "https://www.nexters.me"],
+  "permissions": ["activeTab", "clipboardWrite", "notifications"],
   "background": {
     "scripts": ["background.js"],
     "persistent": false
